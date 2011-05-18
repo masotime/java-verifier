@@ -1,8 +1,24 @@
-objective-c-verifier is a programming language verifier for Objective-C used by Singpath.com
+This project is forked from the objective-c-verifier project.  (https://github.com/SingaporeClouds/objective-c-verifier)
+It does Java compilation rather than Objective-C compilation.
 
-Overtime, we'd like to create a Chef Recipe that could download the latest code for this verifier 
-and any other Linux-based verifiers and deploy them to our Amazon Web Services or other IaaS accounts. 
+The Aptana Studio 3 IDE was used in the development of this project.
 
-Have a look at this blog to learn a little more about Chef and the idea. Infrastructure as Code.
+======
 
-http://blog.ibd.com/howto/deploy-wordpress-to-amazon-ec2-micro-instance-with-opscode-chef/
+Notes on installation in Ubuntu 
+
+* Install apache first by using "sudo apt-get install apache2"
+* Apache configuration is in /etc/apache2 (contrast with Fedora's /etc/httpd). Configuration file is apache2.conf.
+* By default, VirtualHosts are defined (referenced indirectly via apache2.conf) in /etc/apache2/sites-enabled/000-default. Open this file and change the following lines as appropriate (or don't change any paths and use the pre-defined ones):
+  * DocumentRoot /var/www -> set the path to wherever you want your HTTP files to be served from.
+  * ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/ -> Change the second argument to point to the folder containing the CGI files you want to run.
+  * <Directory "/usr/lib/cgi-bin"> -> Make the same change to point to the folder containing CGI files.
+    * Inside this directory XML element, add the following line: AddHandler cgi-script cgi pl. This tells Apache to treat files with the extensions .cgi and .pl as scripts to run.
+  * Run Apache2 via the command "sudo service apache2 start"
+* Installation of Sun's JDK for compiling java programs:
+  * Ensure that the "Canonical Partners" repository for Ubuntu is enabled (http://archive.canonical.com/ubuntu <ubuntu-release-code-name> partner)
+  * Install the package (via apt-get) sun-java-jdk6
+  * Choose Sun Java as the default JRE using sudo update-alternatives --config java
+  * NOTE: The code assumes that
+    * the java compiler is at /usr/bin/javac
+    * the java runtime is at /usr/bin/java

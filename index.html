@@ -1,85 +1,59 @@
-<html>
-<script type="text/javascript">
-function updateValue() {
-    var jsonrequest = document.getElementById('jsonrequest')
-    var solution = document.getElementById('solution')
-    var tests = document.getElementById('tests')
-    var obj = {solution: solution.value, tests: tests.value}
-    jsonrequest.value = JSON.stringify(obj)
-}
-</script>
-<body>
-<h2>Python verifier</h2>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<html>	
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js" type="text/javascript"></script>
+		<script src="js/prettyprint.js" type="text/javascript"></script>		
+		<script type="text/javascript">
+		
+		// adapted from https://github.com/tleese22/google-app-engine-jappstart/blob/master/src/main/webapp/js/script.js
+		function stringifyForm($form) {
+    			var values = {};
+    
+    			$form.find('input[type != submit],textarea').each(function() {
+        			values[this.name] = $(this).val();
+    			});
+    		
+    			return JSON.stringify(values);
 
-<br>
-Solution code:<br>
-<textarea id="solution" rows="10" cols="80">
-int b=2;
-float f = 123.45;
-double inches = 69.0/12;
-NSString *string1 = @"This string is immutable";
-
-//test function
-int addOne(int x) {
-  return x + 1;
-}
-
-//test macro
-#define mul(a,b) ((a)*(b))
-
-//test class
-@interface Rectangle: NSObject {
-    int width;
-    int height;
-}
--(int) area;
--(void) setWidth: (int) w;
--(void) setHeight: (int) h;
--(int) width;
--(int) height;
-@end
-
-@implementation Rectangle
--(int) area {
-    return width * height;
-}
--(void) setWidth: (int) w {
-    width = w;
-}
--(void) setHeight: (int) h {
-    height = h;
-}
--(int) width {
-    return width;
-}
--(int) height {
-    return height;
-}
-@end
-</textarea>
-
-<br>
-Tests:<br>
-<textarea id="tests" rows="10" cols="80">
-AssertEquals(2, b);
-int expected_b = 2;
-AssertEquals(expected_b, b);
-AssertEquals((float)123.45, f);
-AssertEquals(69.0/12.0, inches);
-AssertEquals([NSString stringWithString:@"This string is immutable"], string1);
-
-AssertEquals(4, addOne(3));
-AssertEquals(42, mul(6, 7));
-
-Rectangle *r = [[Rectangle alloc] init];
-[r setWidth: 11];
-[r setHeight: 18];
-AssertEquals(198, [r area]);
-</textarea>
-<form action="/cgi-bin/webserver.py" method="POST">
-<input type="hidden" name="jsonrequest" id="jsonrequest"/>
-<input type="submit" onclick="updateValue()"></input>
-</form>
-</body>
+		}
+		
+		$(function() {
+			$('input#verifier-submit').click(
+				function(e) {
+					$.ajax({
+						type: 'GET',
+						url: 'cgi-bin/verifier.py',
+						data: {jsonrequest: stringifyForm($('form#java-verifier'))},
+						success: function(data, textStatus, jqXHR) {
+							$('div#response').empty().append(prettyPrint(data));
+						}
+					});
+					
+					e.preventDefault(); // don't actually submit the form
+				}
+			);
+		});
+		
+		</script>
+	</head>
+	<body>
+	
+		<form id="java-verifier">
+			<h2>Java verifier</h2>
+			<h3>Code to test</h3>
+			<textarea name="solution" rows="10" cols="80">
+String str = "hello world!";
+			</textarea>			
+			<h3>Assertions</h3>
+			<textarea name="tests" rows="10" cols="80">
+assertEquals("hello world!", str);
+			</textarea>
+		        <br/>	
+			<input type="submit" id="verifier-submit">Submit</input>
+		</form>
+		
+		<div id="response" style="width: 800px;"></div>
+	
+	</body>
 </html>
-
