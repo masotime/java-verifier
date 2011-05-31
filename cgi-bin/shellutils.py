@@ -67,7 +67,7 @@ def compile_java_and_get_results(code):
     base_name = 'JavaSolution_%s' % uid
     src_path = '%s/%s.java' % (BASE_PATH, base_name)
     binary_path = '%s/%s.class' % (BASE_PATH, base_name)
-    curr_path = os.getcwd() # to get an absolute path to the junit JAR
+    curr_path = os.getcwd().replace(' ', '\\ ') # to get an absolute path to the junit JAR
     
     # Special requirement for java - because java requires that the public class name
     # must match the source file name, we do a quick search and replace
