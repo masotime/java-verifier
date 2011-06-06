@@ -48,13 +48,18 @@ class MyHandler():
         if type(jsonrequest) == type([]):
             jsonrequest = jsonrequest[0]
         requestDict = json.loads(jsonrequest)
-        solution = requestDict.get('solution').strip()
-        tests = requestDict.get('tests').strip()
+        
+        # For JSPTest, there is the parameters and the assertions        
+        parameters = requestDict.get('parameters').strip()
+        assertions = requestDict.get('assertions').strip()
+        
         #formattedTests, resultList = formatutils.format_tests(tests, solution)
 
-        # Update the Kava test file by pasting in the solution code and tests.
-        code = formatutils.render_template('java/Tester.java', {'solution': solution, 'tests': tests})
-        compileResult, result = shellutils.compile_java_and_get_results(code)
+        # Update the JSP test file by pasting in the solution code and tests.
+        code = formatutils.render_template('java/JSPTester.java', {'parameters': parameters, 'assertions': assertions})
+        jspcode = requestDict.get('jspcode').strip()
+
+        compileResult, result = shellutils.compile_jsp_and_get_results(code, jspcode)
         
         # Create a valid json respose based on the xcodebuild results or error returned.        
         if compileResult['errors']:
@@ -68,9 +73,14 @@ class MyHandler():
                 
         jsonResult['printed'] = compileResult['warnings_and_errors']
         
+        # DEBUG - remove later
+        jsonResult['javac-command'] = compileResult['javac-command']
+        jsonResult['java-command'] = compileResult['java-command']
+
         # Return the results
         s = json.dumps(jsonResult)
         print s
+        
         return
 
 
