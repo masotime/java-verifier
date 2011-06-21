@@ -6,6 +6,9 @@ types = [
     {'call': 'AssertEqualObjects'},
 ]
 
+# any line of code that is a test command
+RE_TEST_COMMAND = "\s*(page|element|assert)"
+
 def correct_line_numbers(string, src_file):
     result = ''
     for line in string.split('\n'):
@@ -17,6 +20,18 @@ def correct_line_numbers(string, src_file):
             result += '\n'
         result += '%s' % line
     return result
+
+'''Takes lines of assertions and wraps them in try {} catch {}, which will
+allow assertions to continue even on failures'''
+def wrapAssertions(string):
+    wrappedAssertions = ''
+    for line in string.split('\n'):
+        if not (re.match(RE_TEST_COMMAND, line) is None):
+            call = line.replace('"', '\\"')
+            line = 'try { beginTest(); %s } catch (Error e) { setErrorMsg(e.getMessage()); } finally { formatTestResult("%s"); }' % (line, call)
+        wrappedAssertions += str(line) + '\n'
+        
+    return wrappedAssertions
     
 def grep(string, pattern):
     matches = ''

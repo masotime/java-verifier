@@ -51,7 +51,7 @@ class MyHandler():
         
         # For JSPTest, there is the parameters and the assertions        
         parameters = requestDict.get('parameters').strip()
-        assertions = requestDict.get('assertions').strip()
+        assertions = formatutils.wrapAssertions(requestDict.get('assertions').strip())
         
         #formattedTests, resultList = formatutils.format_tests(tests, solution)
 

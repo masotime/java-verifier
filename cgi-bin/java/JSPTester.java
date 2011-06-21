@@ -12,6 +12,9 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * This class is not thread safe.  Do not attempt to run methods on it concurrently.
  * 
@@ -23,6 +26,7 @@ public abstract class JSPTester extends HtmlTestCase {
 	private File f;
 	private Logger logger = Logger.getLogger(this.getClass());
 	private boolean isRandomFile = false;
+	public static final Pattern p = Pattern.compile("<([^>]*)>");
 	
 	/**
 	 * Create a tester to test against code supplied via the constructor
@@ -122,6 +126,28 @@ public abstract class JSPTester extends HtmlTestCase {
 		makeAssertions();		
 		tearDown(); // important!		
 
+	}
+	
+	private String errorMsg;
+	public void beginTest() { errorMsg = null; };
+	public void setErrorMsg(String errorMsg) { this.errorMsg = errorMsg; }
+	public void formatTestResult(String assertion) {
+		System.out.println("call: "+assertion);
+		System.out.println("correct: "+(errorMsg == null));
+		
+		// attempt to parse the assertion
+		String expected = "";
+		String received = "";
+		if (errorMsg != null && errorMsg.toLowerCase().contains("expected")) {
+			Matcher m = p.matcher(errorMsg);
+			if (m.find()) {
+				expected = m.group(1);
+				if (m.find()) received = m.group(1);
+			}
+		}
+		System.out.println("expected: "+expected);
+		System.out.println("received: "+received);
+		
 	}
 	
 	/**
