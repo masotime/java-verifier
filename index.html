@@ -23,7 +23,7 @@
 			$('input#verifier-submit').click(
 				function(e) {
 					$.ajax({
-						type: 'GET',
+						type: 'POST',
 						url: 'cgi-bin/verifier.py',
 						data: {jsonrequest: stringifyForm($('form#java-verifier'))},
 						success: function(data, textStatus, jqXHR) {
