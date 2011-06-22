@@ -108,7 +108,7 @@ public abstract class JSPTester extends HtmlTestCase {
 	}
 	
 	protected abstract void setParameters();	
-	protected abstract void makeAssertions();
+	protected abstract void makeAssertions() throws Exception;
 	
 	public void build() throws Exception {
 		
@@ -128,6 +128,16 @@ public abstract class JSPTester extends HtmlTestCase {
 
 	}
 	
+	public JSPTester onRequest(String key, String value) throws Exception {
+		setRequestParameter(key, value);
+		request("/" + f.getName(), "GET");
+		return this;
+	}
+	
+	public JSPTester and(String key, String value) throws Exception {
+		return onRequest(key, value);
+	}
+
 	private String errorMsg;
 	public void beginTest() { errorMsg = null; };
 	public void setErrorMsg(String errorMsg) { this.errorMsg = errorMsg; }
@@ -170,11 +180,11 @@ public abstract class JSPTester extends HtmlTestCase {
 				@Override
 				protected void setParameters() {
 					// Put code to set parameters here
-					%(parameters)s					
+					%(parameters)s
 				}
 
 				@Override
-				protected void makeAssertions() {
+				protected void makeAssertions() throws Exception {
 					// Put code for assertions here
 					%(assertions)s
 				}

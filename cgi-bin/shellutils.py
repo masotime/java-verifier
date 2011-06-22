@@ -113,8 +113,9 @@ def compile_jsp_and_get_results(code, jspcode):
     # if compilation is successful, run and get the result againt the earlier saved JSP source file
     if os.path.exists(binary_path):
         result = exec_command_and_get_output(commands['runjsp'] % (curr_path, BASE_PATH, base_name, src_jsp_path))
+        result = formatutils.parse_unit_test_results(result)
     else:
-        result = ''
+        result = None
         
     # store the commands that were executed
     compileResult['javac-command'] =  commands['compilejsp'] % (src_java_path, curr_path, BASE_PATH)

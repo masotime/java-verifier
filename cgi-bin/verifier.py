@@ -29,7 +29,7 @@ class MyHandler():
         return self.do_request(path, 'GET', vars)
     
     def do_POST(self):
-        ctype = os.environ.get('CONTENT_TYPE', '')
+        ctype = os.environ.get('CONTENT_TYPE', '')        
         if ctype == 'multipart/form-data':
             postvars = {}
             #postvars = cgi.parse_multipart(sys.stdin, pdict)
@@ -37,8 +37,10 @@ class MyHandler():
             length = int(os.environ.get('CONTENT_LENGTH', 0))
             postvars = cgi.parse_qs(sys.stdin.read(length), keep_blank_values=False)
         else:
-            postvars = {}
-        return self.do_request(self.path, 'POST', postvars)
+            postvars = {}        
+        
+        #return self.do_request(self.path, 'POST', postvars)
+        return self.do_request(self.path, 'POST', self.params)
 
     def do_request(self, path, method, vars):
         print "Content-type: application/json\n\n";
@@ -49,15 +51,19 @@ class MyHandler():
             jsonrequest = jsonrequest[0]
         requestDict = json.loads(jsonrequest)
         
-        # For JSPTest, there is the parameters and the assertions        
-        parameters = requestDict.get('parameters').strip()
-        assertions = formatutils.wrapAssertions(requestDict.get('assertions').strip())
+        # For JSPTest, there is the parameters and the assertions
+        #parameters = requestDict.get('parameters')
+        #if (parameters): parameters.strip() 
+        #else: parameters = ''
+        parameters = ''
+        
+        assertions = formatutils.wrapAssertions(requestDict.get('tests').strip()) # was "assertions"
         
         #formattedTests, resultList = formatutils.format_tests(tests, solution)
 
         # Update the JSP test file by pasting in the solution code and tests.
-        code = formatutils.render_template('java/JSPTester.java', {'parameters': parameters, 'assertions': assertions})
-        jspcode = requestDict.get('jspcode').strip()
+        code = formatutils.render_template('java/JSPTester.java', {'parameters': parameters, 'assertions': assertions}) 
+        jspcode = requestDict.get('solution').strip() # was "jspcode"
 
         compileResult, result = shellutils.compile_jsp_and_get_results(code, jspcode)
         
@@ -66,20 +72,18 @@ class MyHandler():
             jsonResult = {'errors': compileResult['errors']}
         else:
             # it probably compiled, look for test results
-            if result and result[0] == '{' and result[-1] == '}':
-                jsonResult = json.loads(result)
+            if result:
+                jsonResult = result
             else: #other unecpected result
                 jsonResult = {'errors': '%s\n%s' % (compileResult['warnings_and_errors'], result)}
-                
-        jsonResult['printed'] = compileResult['warnings_and_errors']
+                jsonResult['printed'] = compileResult['warnings_and_errors']
         
-        # DEBUG - remove later
-        jsonResult['javac-command'] = compileResult['javac-command']
-        jsonResult['java-command'] = compileResult['java-command']
+                # DEBUG - remove later
+                jsonResult['javac-command'] = compileResult['javac-command']
+                jsonResult['java-command'] = compileResult['java-command']
 
         # Return the results
-        s = json.dumps(jsonResult)
-        print s
+        print json.dumps(jsonResult)
         
         return
 

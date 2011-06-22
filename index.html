@@ -43,7 +43,7 @@
 		<form id="java-verifier">
 			<h2>JSP verifier</h2>
 			<h3>JSP File</h3>
-			<textarea name="jspcode" rows="10" cols="80">
+			<textarea name="solution" rows="10" cols="80">
 <%@ page import="java.util.*, java.text.*" %>
 <HTML>
 <HEAD>
@@ -69,16 +69,16 @@
 </BODY>
 </HTML>
 			</textarea>	
-			<h3>Request Parameters</h3>		
+<!--			<h3>Request Parameters</h3>		
 			<textarea name="parameters" rows="10" cols="80">
-setRequestParameter("fruit", "guava");
-			</textarea>
+// setRequestParameter("fruit", "guava");
+			</textarea> -->
 			<h3>Assertions</h3>
-			<textarea name="assertions" rows="10" cols="80">
+			<textarea name="tests" rows="10" cols="80">
 String expectedDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 page().shouldHaveTitle("Hello Pineapples");
 page().shouldContain("Today is: "+expectedDate);
-page().shouldContain("The request parameter 'fruit' has a value of guava");
+onRequest("fruit", "guava").page().shouldContain("The request parameter 'fruit' has a value of guava");
 page().shouldContainElement("//TABLE/TR/TD/P/B");
 element("//TABLE/TR/TD/P/B").shouldContain("embedded");
 			</textarea>
