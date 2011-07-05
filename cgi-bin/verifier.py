@@ -42,16 +42,18 @@ class MyHandler():
         #return self.do_request(self.path, 'POST', postvars)
         #return self.do_request(self.path, 'POST', self.params)
         
-        params = {}
+        params = postvars 
         fieldStorage = cgi.FieldStorage()
         for key in fieldStorage.keys():
                 params[key] = fieldStorage[key].value
-                        
+        sys.stderr.write('FieldStorage = '+str(fieldStorage))
+	sys.stderr.write('postvars = '+str(postvars))
+        
         return self.do_request(self.path, 'POST', params)
 
     def do_request(self, path, method, vars):
         print "Content-type: application/json\n\n";
-        
+        sys.stderr.write('vars = ' + str(vars))
         # Parse out the posted JSON data
         jsonrequest = vars.get('jsonrequest', '{}')
         
