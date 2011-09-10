@@ -27,7 +27,7 @@ def compile_java_and_get_results(code):
     
     # construct names for the source file and the compiled output
     now = datetime.datetime.now()
-    uid = '%s_%06d' % (now.strftime('%Y%m%d_%H%M%S'), now.microsecond)
+    uid = '%s_%06d_p%s' % (now.strftime('%Y%m%d_%H%M%S'), now.microsecond, os.getpid())
     base_name = 'JavaSolution_%s' % uid
     src_path = '%s/%s.java' % (BASE_PATH, base_name)
     binary_path = '%s/%s.class' % (BASE_PATH, base_name)
@@ -71,7 +71,7 @@ def compile_jsp_and_get_results(code, jspcode):
     
     # construct names for the source file and the compiled output
     now = datetime.datetime.now()
-    uid = '%s_%06d' % (now.strftime('%Y%m%d_%H%M%S'), now.microsecond)
+    uid = '%s_%06d_p%s' % (now.strftime('%Y%m%d_%H%M%S'), now.microsecond, os.getpid())
     base_name = 'JSPTest_%s' % uid
     src_java_path = '%s/%s.java' % (BASE_PATH, base_name)
     src_jsp_path = '%s/%s.jsp' % (BASE_PATH, base_name)
